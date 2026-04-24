@@ -21,6 +21,19 @@ jobs:
         run: npx playwright install --with-deps
       - name: Запускаем тест
         run: npm t
-
+      - name: Генерирую отчет allure 3 в один файл
+        run: npx allure awesome ./allure-result --single-file
+        continue-on-error: true
+        if: always()
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v7.0.1
+        continue-on-error: true
+        if: always()
+        with:
+          name: artifacts
+          path: |
+            allure-report/index.html
+            allure-results
+            playwright-report
         
         
