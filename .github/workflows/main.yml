@@ -23,6 +23,8 @@ jobs:
         run: npm add allure
       - name: Запускаем тест
         run: npm t
+      - name: list
+        run: ls
       - name: Генерирую отчет allure 3 в один файл
         run: npx allure awesome ./allure-result --single-file
         continue-on-error: true
