@@ -19,6 +19,8 @@ jobs:
         run: npm ci
       - name: Устанавливаем браузеры
         run: npx playwright install --with-deps
+      - name: Устанавливаем allure 3
+        run: npm add allure
       - name: Запускаем тест
         run: npm t
       - name: Генерирую отчет allure 3 в один файл
