@@ -9,11 +9,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                nodejs('NodeJS2290') {
+                nodejs('NodeJS22.22.0') {  // ← Изменили имя!
                     sh 'npm ci'
                     sh 'npx playwright install --with-deps chromium'
                     sh 'npm add allure'
-                    // Запуск тестов: даже если упадут — пайплайн продолжит генерацию отчета
                     sh 'npm t || echo "Tests completed with failures"'
                 }
             }
@@ -21,8 +20,7 @@ pipeline {
 
         stage('Generate Allure 3 Report') {
             steps {
-                nodejs('NodeJS2290') {
-                    // Генерация standalone HTML (Allure 3)
+                nodejs('NodeJS22.22.0') {  // ← Изменили имя!
                     sh "npx allure awesome ${ALLURE_RESULTS} --single-file --report-dir ${ALLURE_REPORT}"
                 }
             }
@@ -30,8 +28,6 @@ pipeline {
 
         stage('Publish Allure Report') {
             steps {
-                // Плагин Allure Jenkins Plugin (для Allure 2, опционально)
-                // Для Allure 3 лучше использовать archiveArtifacts + Publish HTML
                 allure(
                     [
                         includeProperties: false,
@@ -47,17 +43,13 @@ pipeline {
 
     post {
         always {
-            // Архивация артефактов для скачивания
             archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*,${ALLURE_REPORT}/**/*,playwright-report/**/*",
                              allowEmptyArchive: true,
                              fingerprint: true
             echo '✅ Pipeline completed. Reports archived.'
         }
-        success {
-            echo '🎉 All tests passed!'
-        }
         failure {
-            echo '❌ Pipeline failed. Check console output and archived artifacts.'
+            echo '❌ Pipeline failed. Check console output.'
         }
     }
 }
