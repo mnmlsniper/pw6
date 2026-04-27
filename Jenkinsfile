@@ -9,10 +9,11 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                nodejs('NodeJS22.22.0') {  // ← Изменили имя!
+                nodejs('NodeJS22.22.0') {
                     sh 'npm ci'
                     sh 'npx playwright install --with-deps chromium'
                     sh 'npm add allure'
+                    // Запускаем тесты: ошибки не ломают пайплайн
                     sh 'npm t || echo "Tests completed with failures"'
                 }
             }
@@ -20,14 +21,19 @@ pipeline {
 
         stage('Generate Allure 3 Report') {
             steps {
-                nodejs('NodeJS22.22.0') {  // ← Изменили имя!
-                    sh "npx allure awesome ${ALLURE_RESULTS} --single-file --report-dir ${ALLURE_REPORT}"
+                nodejs('NodeJS22.22.0') {
+                    // ✅ Исправлено: -o вместо --report-dir
+                    // --single-file создаст один HTML-файл
+                    catchError(buildFail: false, stageResult: 'UNSTABLE') {
+                        sh "npx allure awesome ${ALLURE_RESULTS} --single-file -o ${ALLURE_REPORT}/report.html"
+                    }
                 }
             }
         }
 
         stage('Publish Allure Report') {
             steps {
+                // Allure Plugin (для Allure 2, опционально)
                 allure(
                     [
                         includeProperties: false,
@@ -43,7 +49,8 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*,${ALLURE_REPORT}/**/*,playwright-report/**/*",
+            // Архивируем всё: результаты, отчёт, скриншоты
+            archiveArtifacts artifacts: "${ALLURE_RESULTS}/**/*,${ALLURE_REPORT}/**/*,playwright-report/**/*,test-results/**/*",
                              allowEmptyArchive: true,
                              fingerprint: true
             echo '✅ Pipeline completed. Reports archived.'
