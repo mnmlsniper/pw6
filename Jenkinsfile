@@ -19,17 +19,17 @@ pipeline {
             }
         }
 
-        stage('Generate Allure 3 Report') {
-            steps {
-                nodejs('NodeJS22.22.0') {
+   //     stage('Generate Allure 3 Report') {
+ //           steps {
+     //           nodejs('NodeJS22.22.0') {
                     // ✅ Исправлено: -o вместо --report-dir
                     // --single-file создаст один HTML-файл
-                    catchError(buildResult: false, stageResult: 'UNSTABLE') {
-                        sh "npx allure awesome ${ALLURE_RESULTS} --single-file -o ${ALLURE_REPORT}/report.html"
-                    }
-                }
-            }
-        }
+//                    catchError(buildResult: false, stageResult: 'UNSTABLE') {
+  //                      sh "npx allure awesome ${ALLURE_RESULTS} --single-file -o ${ALLURE_REPORT}/report.html"
+    //                }
+    //            }
+     //       }
+      //  }
 
         stage('Publish Allure Report') {
             steps {
