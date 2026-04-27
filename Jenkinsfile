@@ -24,7 +24,7 @@ pipeline {
                 nodejs('NodeJS22.22.0') {
                     // ✅ Исправлено: -o вместо --report-dir
                     // --single-file создаст один HTML-файл
-                    catchError(buildFail: false, stageResult: 'UNSTABLE') {
+                    catchError(buildResult: false, stageResult: 'UNSTABLE') {
                         sh "npx allure awesome ${ALLURE_RESULTS} --single-file -o ${ALLURE_REPORT}/report.html"
                     }
                 }
