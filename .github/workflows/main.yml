@@ -7,9 +7,15 @@ on:
 # ручной запуск
   workflow_dispatch:
 
-jobs:
+# шпаргалка
+# ${{secrets.TELEGRAMBOTTOKEN}}
+# ${{vars.CHALLENGESURL}}
+
+jobs: 
   pw6tests:
     runs-on: ubuntu-latest
+    env:
+      todo: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -23,6 +29,9 @@ jobs:
         run: npm add allure
       - name: Запускаем тест
         run: npm t
+        env:
+          TLGTOKEN: ${{secrets.TELEGRAMBOTTOKEN}}
+          APIURL: ${{vars.CHALLENGESURL}}
       - name: list
         run: ls
       - name: Генерирую отчет allure 3 в один файл
@@ -39,5 +48,7 @@ jobs:
             allure-report/index.html
             allure-results
             playwright-report
+env:
+  globalTodo: 2
         
         
