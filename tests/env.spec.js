@@ -10,7 +10,7 @@ const getToken = () => {
 };
 
 test.only("Получить токен доступа facade", async ({ api }) => {
-  console.log(process.env.time);
+  console.log(process.env);
   const token = getToken();
   const response = await api.challenges.get(token);
 
